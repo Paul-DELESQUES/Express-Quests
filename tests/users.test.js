@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../src/app");
 const database = require("../database");
+const crypto = require("node:crypto");
 
 afterAll(() => database.end());
 
@@ -28,6 +29,139 @@ describe("GET /api/users/:id", () => {
   it("should return no user", async () => {
     const response = await request(app).get("/api/users/0");
 
+    expect(response.status).toEqual(404);
+  });
+});
+
+describe("POST /api/users", () => {
+  it("should return created user", async () => {
+    const newUser = {
+      firstname: "Marie",
+      lastname: "Martin",
+      email: `${crypto.randomUUID()}@wild.co`,
+      city: "Paris",
+      language: "French",
+    };
+
+    const response = await request(app).post("/api/users").send(newUser);
+
+    expect(response.status).toEqual(201);
+    expect(response.body).toHaveProperty("id");
+    expect(typeof response.body.id).toBe("number");
+
+    const [result] = await database.query(
+      "SELECT * FROM users WHERE id=?",
+      response.body.id
+    );
+
+    const [usersInDatabase] = result;
+
+    expect(usersInDatabase).toHaveProperty("id");
+    expect(usersInDatabase).toHaveProperty("email");
+    expect(usersInDatabase.firstname).toStrictEqual(newUser.firstname);
+    expect(usersInDatabase.lastname).toStrictEqual(newUser.lastname);
+    expect(usersInDatabase.email).toStrictEqual(newUser.email);
+    expect(usersInDatabase.city).toStrictEqual(newUser.city);
+    expect(usersInDatabase.language).toStrictEqual(newUser.language);
+  });
+
+  it("should return an error", async () => {
+    const userWithMissingProps = { firstname: "Marie" };
+
+    const response = await request(app)
+      .post("/api/users")
+      .send(userWithMissingProps);
+
+    expect(response.status).toEqual(500);
+  });
+});
+
+describe("PUT /api/users/:id", () => {
+  it("should edit user", async () => {
+    const newUser = {
+      firstname: "toto",
+      lastname: "le best",
+      email: `${crypto.randomUUID()}@wild.co`,
+      city: "wild",
+      language: "js",
+    };
+
+    const [resultInsert] = await database.query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [
+        newUser.firstname,
+        newUser.lastname,
+        newUser.email,
+        newUser.city,
+        newUser.language,
+      ]
+    );
+    const id = resultInsert.insertId;
+
+    const updatedUser = {
+      firstname: "totoV2",
+      lastname: "le best",
+      email: `${crypto.randomUUID()}@wild.co`,
+      city: "wild(testupdate)",
+      language: "js et python",
+    };
+
+    const response = await request(app)
+      .put(`/api/users/${id}`)
+      .send(updatedUser);
+    expect(response.status).toEqual(204);
+
+    const [resultSelect] = await database.query(
+      "SELECT * FROM users WHERE id=?",
+      id
+    );
+
+    const [userInDatabase] = resultSelect;
+
+    expect(userInDatabase).toHaveProperty("id");
+
+    expect(userInDatabase).toHaveProperty("firstname");
+    expect(userInDatabase.firstname).toStrictEqual(updatedUser.firstname);
+
+    expect(userInDatabase).toHaveProperty("lastname");
+    expect(userInDatabase.lastname).toStrictEqual(updatedUser.lastname);
+
+    expect(userInDatabase).toHaveProperty("email");
+    expect(userInDatabase.email).toStrictEqual(updatedUser.email);
+
+    expect(userInDatabase).toHaveProperty("city");
+    expect(userInDatabase.city).toStrictEqual(updatedUser.city);
+
+    expect(userInDatabase).toHaveProperty("language");
+    expect(userInDatabase.language).toStrictEqual(updatedUser.language);
+  });
+
+  it("should return an error", async () => {
+    const userWithMissingProps = {
+      firstname: "toto",
+      lastname: "",
+      email: "",
+      city: "",
+      language: "",
+    };
+
+    const response = await request(app)
+      .put(`/api/users/1`)
+      .send(userWithMissingProps);
+
+    expect(response.status).toEqual(500);
+  });
+
+  it("should return no user", async () => {
+    const newUser = {
+      firstname: "toto",
+      lastname: "le best",
+      email: "toto.goat@wild.co",
+      city: "wild",
+      language: "js",
+    };
+
+    const response = await request(app).put("/api/users/0").send(newUser);
     expect(response.status).toEqual(404);
   });
 });

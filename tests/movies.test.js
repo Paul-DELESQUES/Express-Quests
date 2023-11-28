@@ -191,8 +191,8 @@ describe("DELETE /api/movies/:id", () => {
     expect(resultSelect.length).toBe(0);
   });
 
-  it("should return error 404 for non-existent movie", async () => {
-    const response = await request(app).delete(`/api/movies/9999`);
+  it("should return error 404", async () => {
+    const response = await request(app).delete(`/api/movies/0`);
     expect(response.status).toEqual(404);
   });
 });

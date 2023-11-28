@@ -58,7 +58,7 @@ describe("POST /api/movies", () => {
     expect(movieInDatabase.title).toStrictEqual(newMovie.title);
     expect(movieInDatabase.director).toStrictEqual(newMovie.director);
     expect(movieInDatabase.year).toStrictEqual(newMovie.year);
-    expect(Boolean(movieInDatabase.color)).toBe(newMovie.color);
+    expect(Boolean(movieInDatabase.color)).toStrictEqual(newMovie.color);
     expect(movieInDatabase.duration).toBe(newMovie.duration);
   });
 

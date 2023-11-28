@@ -137,13 +137,7 @@ describe("PUT /api/users/:id", () => {
   });
 
   it("should return an error", async () => {
-    const userWithMissingProps = {
-      firstname: "toto",
-      lastname: "",
-      email: "",
-      city: "",
-      language: "",
-    };
+    const userWithMissingProps = { firstname: "toto" };
 
     const response = await request(app)
       .put(`/api/users/1`)

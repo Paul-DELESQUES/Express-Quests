@@ -34,7 +34,6 @@ const getMovies = (req, res) => {
       res.json(movies); // use res.json instead of console.log
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -46,7 +45,6 @@ const getUsers = (req, res) => {
       res.json(users);
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -64,7 +62,6 @@ const getMovieById = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -82,7 +79,6 @@ const getUsersById = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -99,7 +95,6 @@ const postMovie = (req, res) => {
       res.status(201).send({ id: result.insertId });
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -116,7 +111,6 @@ const postUsers = (req, res) => {
       res.status(201).send({ id: result.insertId });
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -138,7 +132,6 @@ const updateMovie = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };
@@ -160,7 +153,6 @@ const updateUser = (req, res) => {
       }
     })
     .catch((err) => {
-      console.error(err);
       res.sendStatus(500);
     });
 };

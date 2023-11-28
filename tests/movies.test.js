@@ -58,7 +58,7 @@ describe("POST /api/movies", () => {
     expect(movieInDatabase.title).toStrictEqual(newMovie.title);
     expect(movieInDatabase.director).toStrictEqual(newMovie.director);
     expect(movieInDatabase.year).toStrictEqual(newMovie.year);
-    expect(movieInDatabase.color).toBe(newMovie.color);
+    expect(Boolean(movieInDatabase.color)).toBe(newMovie.color);
     expect(movieInDatabase.duration).toBe(newMovie.duration);
   });
 
@@ -99,7 +99,7 @@ describe("PUT /api/movies/:id", () => {
       title: "Wild is life",
       director: "Alan Smithee",
       year: "2023",
-      color: false,
+      color: true,
       duration: 120,
     };
 
@@ -127,7 +127,9 @@ describe("PUT /api/movies/:id", () => {
     expect(movieInDatabase.year).toStrictEqual(updatedMovie.year);
 
     expect(movieInDatabase).toHaveProperty("color");
-    expect(Boolean(movieInDatabase.color)).toStrictEqual(updatedMovie.color);
+    expect(Boolean(parseInt(movieInDatabase.color))).toStrictEqual(
+      updatedMovie.color
+    );
 
     expect(movieInDatabase).toHaveProperty("duration");
     expect(movieInDatabase.duration).toStrictEqual(updatedMovie.duration);

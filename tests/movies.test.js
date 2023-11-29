@@ -33,11 +33,11 @@ describe("GET /api/movies/:id", () => {
 describe("POST /api/movies", () => {
   it("should return created movie", async () => {
     const newMovie = {
-      title: "Star Wars",
-      director: "George Lucas",
-      year: "1977",
+      title: "The Last Samurai",
+      director: " Edward Zwick",
+      year: "2003",
       color: true,
-      duration: 120,
+      duration: 154,
     };
 
     const response = await request(app).post("/api/movies").send(newMovie);
